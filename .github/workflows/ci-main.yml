@@ -38,7 +38,7 @@ jobs:
           argocd login $LB --username admin --password $PASS --insecure
         name: ArgoCD login
       - run: |
-          argocd app create ${{ inputs.componentName }} --repo https://github.com/tejadevsecops/roboshop-helm.git --path . --dest-namespace default --dest-server https://kubernetes.default.svc --values env-dev/${{ inputs.componentName }}.yaml
+          argocd app create ${{ inputs.componentName }} --repo https://github.com/tejadevsecops/roboshop-helm.git --path . --dest-namespace default --dest-server https://kubernetes.default.svc --values env-dev/${{ inputs.componentName }}.yaml --helm-set COMMIT_ID=${{ github.sha }} --upsert
           argocd app sync ${{ inputs.componentName }}
         name: ArgoCD App create and sync
   QA:
