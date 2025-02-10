@@ -22,7 +22,7 @@ jobs:
       - run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 021891599381.dkr.ecr.us-east-1.amazonaws.com
           if [ ${{ inputs.componentName }} == "shipping" ]; then
-            curl -v -L -o /tmp/newrelic.java.zip https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+            curl -v -L -o /tmp https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
             unzip /tmp/newrelic-java.zip
           fi
           docker build -t 021891599381.dkr.ecr.us-east-1.amazonaws.com/roboshop-${{ inputs.componentName }}:${{ github.sha }} .
