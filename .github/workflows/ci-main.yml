@@ -33,7 +33,7 @@ jobs:
             infra-secrets/data/sonarqube username | sonar_user ;
             infra-secrets/data/sonarqube password | sonar_pass ;
       - name: Code Quality Checks
-        run: echo /sonar-scanner/sonar-scanner-6.1.0.4477-linux-x64/bin/sonar-scanner -Dsonar.host.url=http://sonarqube-internal.tejadevopsb81.icu:9000 -Dsonar.login=${{ steps.sonarqube.outputs.sonar_user }} -Dsonar.password=${{ steps.sonarqube.outputs.sonar_pass }} -Dsonar.qualitygate.wait=true -Dsonar.projectKey=${{ inputs.componentName }}
+        run: /sonar-scanner/sonar-scanner-6.1.0.4477-linux-x64/bin/sonar-scanner -Dsonar.host.url=http://sonarqube-internal.tejadevopsb81.icu:9000 -Dsonar.login=${{ steps.sonarqube.outputs.sonar_user }} -Dsonar.password=${{ steps.sonarqube.outputs.sonar_pass }} -Dsonar.qualitygate.wait=true -Dsonar.projectKey=${{ inputs.componentName }}
       - name: SAST Scan
         run: echo SAST Scan
       - name: SCA Check
