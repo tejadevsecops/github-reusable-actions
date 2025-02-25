@@ -38,7 +38,7 @@ jobs:
       - name: Maven Compile for Java
         run: |
           if [ ${{ inputs.componentName }} == "shipping" ]; then
-            echo mvn clean compile
+             mvn clean compile
           fi
       - name: Code Quality Checks
         run: /sonar-scanner/sonar-scanner-6.1.0.4477-linux-x64/bin/sonar-scanner -Dsonar.host.url=http://sonarqube-internal.tejadevopsb81.icu:9000 -Dsonar.login=${{ steps.sonarqube.outputs.sonar_user }} -Dsonar.password=${{ steps.sonarqube.outputs.sonar_pass }} -Dsonar.qualitygate.wait=true -Dsonar.projectKey=${{ inputs.componentName }} ${{ inputs.SONAR_CLASS_PATH }}
