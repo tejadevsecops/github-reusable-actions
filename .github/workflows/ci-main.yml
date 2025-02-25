@@ -5,6 +5,10 @@ on:
       componentName:
         required: true
         type: string
+    secrets:
+      VAULT_TOKEN:
+        required: true
+
 run-name: ${{ github.sha }} | ${{ github.event.head_commit.message }}
 jobs:
   UNIT-TESTS:
@@ -13,10 +17,31 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           echo
+          
+  SECURITY-SCANS:
+    runs-on: self-hosted
+    needs: UNIT-TESTS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import SonarQube Secrets
+        id: sonarqube
+        uses: hashicorp/vault-action@v2
+        with:
+          url: http://vault-internal.tejadevopsb81.icu:8200
+          token: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+            infra-secrets/data/sonarqube username | sonar_user ;
+            infra-secrets/data/sonarqube password | sonar_pass ;
+      - name: Code Quality Checks
+        run: echo /sonar-scanner/sonar-scanner-6.1.0.4477-linux-x64/bin/sonar-scanner -Dsonar.host.url=http://sonarqube-internal.tejadevopsb81.icu:9000 -Dsonar.login=${{ steps.sonarqube.outputs.sonar_user }} -Dsonar.password=${{ steps.sonarqube.outputs.sonar_pass }} -Dsonar.qualitygate.wait=true -Dsonar.projectKey=${{ inputs.componentName }}
+      - name: SAST Scan
+        run: echo SAST Scan
+      - name: SCA Check
+        run: echo SCA Check
 
   build:
     runs-on: self-hosted
-    needs: UNIT-TESTS
+    needs: SECURITY-SCANS
     steps:
       - uses: actions/checkout@v4
       - run: |
