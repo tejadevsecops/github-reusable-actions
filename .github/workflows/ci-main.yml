@@ -122,6 +122,9 @@ on:
       componentName:
         required: true
         type: string
+    secrets:
+      NR_API_KEY:
+        required: true
 
 run-name: ${{ github.sha }} | ${{ github.event.head_commit.message }}
 jobs:
@@ -139,7 +142,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 897782981255.dkr.ecr.us-east-1.amazonaws.com
-          docker build -t 897782981255.dkr.ecr.us-east-1.amazonaws.com/roboshop-${{ inputs.componentName }}:${{ github.sha }} .
+          if [ ${{ inputs.componentName }} == "shipping" ]; then
+              curl -v -L -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+              unzip newrelic-java.zip
+          fi
+          docker build --build-arg NR_API_KEY=${{ secrets.NR_API_KEY }} -t 897782981255.dkr.ecr.us-east-1.amazonaws.com/roboshop-${{ inputs.componentName }}:${{ github.sha }} .
           docker push 897782981255.dkr.ecr.us-east-1.amazonaws.com/roboshop-${{ inputs.componentName }}:${{ github.sha }}
 
   DEV:
